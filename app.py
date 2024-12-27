@@ -1,9 +1,16 @@
 import streamlit as st
 import pandas as pd
 import joblib
+import sklearn  # Add this import to ensure scikit-learn is loaded
+import numpy as np  # Add this import
+from scipy import stats  # Add this import
 
 # Load the trained model
-model = joblib.load("mortality_rate_model.pkl")
+@st.cache_resource  # Use cache to load the model only once
+def load_model():
+    return joblib.load("mortality_rate_model.pkl")
+
+model = load_model()
 
 # Define the input features
 features = [
@@ -32,13 +39,12 @@ for feature in features:
 if st.button("Predict Mortality Rate"):
     # Convert input data to DataFrame
     input_df = pd.DataFrame([input_data])
-
+    
     # Make prediction
     prediction = model.predict(input_df)
-
+    
     # Display the prediction
     st.success(f"The predicted Mortality Rate is: {prediction[0]:.2f}%")
 
 # Add some information about the model
 st.info("This model predicts mortality rates based on various health and socioeconomic factors.")
-
